@@ -78,7 +78,7 @@ def check_user_exists(user_id):
 
 
 def insert_data(userinfo):
-    if not session.query(exists().where(User.user_id == userinfo['user_id'])).scalar():
+    if not check_user_exists(userinfo['user_id']):
         user = User(**userinfo)
         session.add(user)
         session.commit()
