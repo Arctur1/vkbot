@@ -63,7 +63,7 @@ class VkRequest:
         store_matches(data, user_id)
         return data
 
-    def get_photos(self, match_id=None):
+    def get_photos(self, match_id=None, number_of_photos=3):
         if match_id is None:
             match_id = 1
         photos_url = self.url + 'photos.get'
@@ -76,8 +76,8 @@ class VkRequest:
         }
         res = requests.get(photos_url, params={**self.params, **photos_params})
         photos = []
-        if len(res.json()['response']['items']) > 2:
-            for i in range(0, 3):
+        if len(res.json()['response']['items']) >= number_of_photos:
+            for i in range(0, number_of_photos):
                 photos.append(res.json()['response']['items'][i]['id'])
         else:
             photos.append(res.json()['response']['items'][0]['id'])
