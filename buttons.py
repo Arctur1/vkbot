@@ -49,3 +49,28 @@ BUTTONS_SEX = json.dumps({
     ]
   ]
 })
+
+MAINMENU = json.dumps({
+  "buttons": [
+    [
+      {
+        "action": {
+          "type": "text",
+          "label": "Искать",
+          "payload": ""
+        },
+        "color": "primary"
+      },
+      {
+        "action": {
+          "type": "text",
+          "label": "Ввести данные",
+          "payload": ""
+        },
+        "color": "primary"
+      }
+    ]
+  ]
+})
+
+EMPTY_KEYBOARD = json.dumps({"buttons": [], "one_time": True})

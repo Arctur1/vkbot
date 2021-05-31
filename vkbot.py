@@ -4,7 +4,7 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 from vkapi import VkRequest
 from settings import token
 from db import insert_data, check_user_exists,get_matches
-from buttons import BUTTONS_SEX, BUTTONS_GET_CITY
+from buttons import BUTTONS_SEX, BUTTONS_GET_CITY, MAINMENU, EMPTY_KEYBOARD
 from datetime import date, datetime
 
 vk = vk_api.VkApi(token=token)
@@ -25,7 +25,7 @@ def get_data(user_id):
     if 'bdate' in data['response'][0]:
         userinfo['age'] = calculate_age(data['response'][0]['bdate'])
     else:
-        write_msg(user_id, f"Введите ваш возраст")
+        write_msg(user_id, f"Введите ваш возраст", EMPTY_KEYBOARD)
         userinfo['age'] = get_age()
 
     if 'sex' in data['response'][0]:
@@ -37,7 +37,7 @@ def get_data(user_id):
     if 'city' in data['response'][0]:
         userinfo['city'] = data['response'][0]['city']['id']
     else:
-        write_msg(user_id, f"Введите ваш город")
+        write_msg(user_id, f"Введите ваш город", EMPTY_KEYBOARD)
         userinfo['city'] = get_city()['id']
 
     if 'relation' in data['response'][0]:
@@ -68,17 +68,15 @@ def start():
 
             if event.to_me:
                 request = event.text
-                write_msg(event.user_id, f"д - ввести данные, ф - получить фото")
-                if request == "д":
+                write_msg(event.user_id, f"...", MAINMENU)
+                if request == "Ввести данные":
                     if not check_user_exists(event.user_id):
                         userinfo = get_data(event.user_id)
                         insert_data(userinfo)
                     VkRequest().search_matches(event.user_id)
-                    write_msg(event.user_id, f"Успешно")
-                elif request == "ф":
+                    write_msg(event.user_id, f"Успешно", MAINMENU)
+                elif request == "Искать":
                     send_photos(event.user_id)
-                else:
-                    write_msg(event.user_id, "Не поняла вас")
 
 
 def get_age():
