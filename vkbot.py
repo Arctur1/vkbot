@@ -5,6 +5,7 @@ from vkapi import VkRequest
 from settings import token
 from db import insert_data, check_user_exists,get_matches
 from buttons import BUTTONS_SEX, BUTTONS_GET_CITY
+from datetime import date, datetime
 
 vk = vk_api.VkApi(token=token)
 longpoll = VkLongPoll(vk)
@@ -21,8 +22,8 @@ def get_data(user_id):
     if 'id' in data['response'][0]:
         userinfo['user_id'] = data['response'][0]['id']
 
-    if 'bdate' in data['response'][0] and len(str(data['response'][0]['bdate'])) > 7:
-        userinfo['age'] = 2021 - int(str(data['response'][0]['bdate'][-4:]))
+    if 'bdate' in data['response'][0]:
+        userinfo['age'] = calculate_age(data['response'][0]['bdate'])
     else:
         write_msg(user_id, f"Введите ваш возраст")
         userinfo['age'] = get_age()
@@ -124,3 +125,8 @@ def get_city():
                 else:
                     write_msg(event.user_id, f"Не нашла такой город, введите ваш город еще раз")
 
+
+def calculate_age(b_date):
+    b_date = datetime.strptime(b_date, '%m.%d.%Y')
+    today = date.today()
+    return today.year - b_date.year - ((today.month, today.day) < (b_date.month, b_date.day))
