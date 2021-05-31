@@ -2,7 +2,7 @@ from random import randrange
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vkapi import VkRequest
-from tokenlist import token
+from settings import token
 from db import insert_data, check_user_exists,get_matches
 from buttons import BUTTONS_SEX, BUTTONS_GET_CITY
 
