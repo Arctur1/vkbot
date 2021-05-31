@@ -2,7 +2,7 @@ import sqlalchemy as sq
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.sql import exists
-from tokenlist import DSN
+from settings import DSN
 
 engine = create_engine(DSN)
 Base = declarative_base()

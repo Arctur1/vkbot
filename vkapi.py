@@ -1,5 +1,5 @@
 import requests
-from tokenlist import tokenapp
+from settings import tokenapp
 from db import get_user_db, store_matches
 
 
