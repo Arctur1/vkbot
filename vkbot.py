@@ -57,7 +57,7 @@ def send_photos(user_id):
         vk.method('messages.send', {'user_id': user_id, 'message': message,
                                     'random_id': randrange(10 ** 7)})
         for i in VkRequest().get_photos(match_id):
-            attachment = f'photo{match_id}_{i}'
+            attachment = f'photo{match_id}_{i[0]}'
             vk.method('messages.send', {'user_id': user_id,
                                         'random_id': randrange(10 ** 7), 'attachment': attachment})
 

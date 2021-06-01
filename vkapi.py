@@ -78,7 +78,10 @@ class VkRequest:
         photos = []
         if len(res.json()['response']['items']) >= number_of_photos:
             for i in range(0, number_of_photos):
-                photos.append(res.json()['response']['items'][i]['id'])
+                photos.append([res.json()['response']['items'][i]['id'],
+                               res.json()['response']['items'][i]['likes']['count']])
+                photos.sort(key=lambda x: x[1], reverse=True)
+                print(photos)
         else:
             photos.append(res.json()['response']['items'][0]['id'])
         return photos
