@@ -67,8 +67,8 @@ def row_to_dict(row):
     return d
 
 
-def get_user_db(user_id):
-    data = session.query(User).filter(User.user_id == user_id).one_or_none()
+def get_user_db(user_id, db=session):
+    data = db.query(User).filter(User.user_id == user_id).one_or_none()
     data = row_to_dict(data)
     return data
 
