@@ -4,7 +4,14 @@ from db import get_user_db, store_matches
 
 
 class VkRequest:
+
     url = 'https://api.vk.com/method/'
+
+    MALE = 1
+    FEMALE = 2
+    HAS_PHOTO = 1  # 1 — искать только пользователей с фотографией, 0 — искать по всем пользователям.
+    AGE_RANGE = 2  # Разница в возрасте для подбора пары.
+    SORT = 0  # 1 — по дате регистрации, 0 — по популярности.
 
     def __init__(self):
         self.token = tokenapp
@@ -15,12 +22,17 @@ class VkRequest:
         }
 
     def search_cities(self, city):
+
+        country_id = 1  # ID страны
+        need_all = 0  # 1 – возвращать все города. 0 – возвращать только основные города.
+        count = 1  # количество городов, которые необходимо вернуть.
+
         cities_url = self.url + 'database.getCities'
         cities_params = {
-            'country_id': 1,
+            'country_id': country_id,
             'q': city,
-            'need_all': 0,
-            'count': 1
+            'need_all': need_all,
+            'count': count
         }
         res = requests.get(cities_url, params={**self.params, **cities_params})
         data = res.json()
@@ -40,22 +52,24 @@ class VkRequest:
         return data
 
     def search_matches(self, user_id):
+
         search_url = self.url + 'users.search'
         user = get_user_db(user_id)
         age = int(user['age'])
         city = int(user['city'])
-        sex = 1
-        if int(user['sex']) == 1:
-            sex = 2
-        if int(user['sex']) == 2:
-            sex = 1
+        sex = self.FEMALE
+
+        if int(user['sex']) == self.MALE:
+            sex = self.FEMALE
+        if int(user['sex']) == self.FEMALE:
+            sex = self.MALE
         search_params = {
-            'sort': 0,
+            'sort': self.SORT,
             'city': city,
             'sex': sex,
-            'age_from': age - 2,
-            'age_to': age + 2,
-            'has_photo': 1,
+            'age_from': age - self.AGE_RANGE,
+            'age_to': age + self.AGE_RANGE,
+            'has_photo': self.HAS_PHOTO,
             'fields': 'is_closed'
         }
         get = requests.get(search_url, params={**self.params, **search_params})
@@ -64,15 +78,20 @@ class VkRequest:
         return data
 
     def get_photos(self, match_id=None, number_of_photos=3):
+
+        rev = 1  # порядок сортировки фотографий. Возможные значения: 1 — антихронологический, 0 — хронологический.
+        count = 3  # Кол-во фотографий
+        extended = 1  # 1 — будут возвращены дополнительные поля likes, comments, tags, can_comment, reposts.
+
         if match_id is None:
             match_id = 1
         photos_url = self.url + 'photos.get'
         photos_params = {
             'owner_id': match_id,
             'album_id': 'profile',
-            'extended': 1,
-            'count': 3,
-            'rev': 1
+            'extended': extended,
+            'count': count,
+            'rev': rev
         }
         res = requests.get(photos_url, params={**self.params, **photos_params})
         photos = []
@@ -83,5 +102,6 @@ class VkRequest:
                 photos.sort(key=lambda x: x[1], reverse=True)
                 print(photos)
         else:
-            photos.append(res.json()['response']['items'][0]['id'])
+            photos.append([res.json()['response']['items'][0]['id'],
+                          res.json()['response']['items'][0]['likes']['count']])
         return photos
