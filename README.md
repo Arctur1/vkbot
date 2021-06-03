@@ -18,3 +18,4 @@ https://vk.com/dev/authcode_flow_user
 example: 'postgresql://scott:tiger@localhost/mydatabase'
 
   
+![example](https://user-images.githubusercontent.com/63368385/120698423-b7676d00-c4b7-11eb-8bd5-f53cfde76d21.png)
