@@ -2,10 +2,10 @@ import pytest
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from settings import DSN
-from factories import UserFactory
-from Database.models import User
-from Database.queries import get_user_db
-from Database.inserts import check_user_exists
+from factories import UserFactory, MatchesFactory
+from database.models import User, Matches
+from database.queries import get_user_db
+from database.inserts import check_user_exists, insert_matches, check_match_exists
 
 engine = create_engine(DSN)
 Session = sessionmaker()
@@ -22,7 +22,10 @@ def connection():
 def session(connection):
     transaction = connection.begin()
     session = Session(bind=connection)
+
     UserFactory._meta.sqlalchemy_session = session
+    MatchesFactory._meta.sqlalchemy_session = session
+
     yield session
     session.close()
     transaction.rollback()
@@ -48,9 +51,32 @@ def test_get_user_db(session):
     assert result
 
 
-def test_check_user_exists():
+def test_check_user_exists(session):
     count = 6
     users = UserFactory.create_batch(count)
     chosen_one = users.pop()
-    result = check_user_exists(session, chosen_one)
+    result = check_user_exists(session, chosen_one.user_id)
+    assert result
+
+
+def test_check_match_exists(session):
+    count = 6
+    matches = MatchesFactory.create_batch(count)
+    chosen_one = matches.pop()
+    result = check_match_exists(session, chosen_one.match_id, chosen_one.user_id)
+    assert result
+
+
+def test_insert_matches(session):
+    data = {
+        "response": {
+            "items": [{
+                "id": 1,
+                "is_closed": False
+                }]
+            }
+        }
+    insert_matches(session, data, 0)
+    insert_matches(session, data, 0)
+    result = session.query(Matches).one_or_none()
     assert result

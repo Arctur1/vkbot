@@ -1,5 +1,5 @@
 import factory
-from Database.models import User
+from database.models import User, Matches
 
 
 class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -11,3 +11,12 @@ class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     class Meta:
         model = User
+
+
+class MatchesFactory(factory.alchemy.SQLAlchemyModelFactory):
+    user_id = factory.Sequence(lambda n: '%s' % n)
+    match_id = factory.Sequence(lambda n: '%s' % n)
+    seen = factory.Sequence(lambda n: '%s' % n)
+
+    class Meta:
+        model = Matches

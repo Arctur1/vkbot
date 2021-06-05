@@ -1,7 +1,7 @@
 import requests
 from settings import tokenapp
-from Database.queries import get_user_db
-from Database.inserts import store_matches
+from database.queries import get_user_db
+from database.inserts import insert_matches
 
 
 class VkRequest:
@@ -75,7 +75,7 @@ class VkRequest:
         }
         get = requests.get(search_url, params={**self.params, **search_params})
         data = get.json()
-        store_matches(data, user_id)
+        insert_matches(data, user_id)
         return data
 
     def get_photos(self, match_id=None, number_of_photos=3):

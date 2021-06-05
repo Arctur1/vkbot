@@ -2,7 +2,7 @@ from sqlalchemy import (
     Column,
     Integer
 )
-from base import Base
+from database.base import Base,engine
 
 
 class User(Base):

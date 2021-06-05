@@ -1,5 +1,5 @@
-from Database.base import DBSession
-from Database.models import User, Matches
+from database.base import DBSession
+from database.models import User, Matches
 
 
 def get_user_db(user_id, db=DBSession):

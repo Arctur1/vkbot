@@ -3,8 +3,8 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vkapi import VkRequest
 from settings import token
-from Database.queries import get_matches
-from Database.inserts import insert_data, check_user_exists
+from database.queries import get_matches
+from database.inserts import insert_data, check_user_exists
 from buttons import BUTTONS_SEX, BUTTONS_GET_CITY, MAINMENU, EMPTY_KEYBOARD
 from datetime import date, datetime
 
