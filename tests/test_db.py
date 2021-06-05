@@ -4,9 +4,8 @@ from sqlalchemy import create_engine
 from settings import DSN
 from factories import UserFactory, MatchesFactory
 from database.models import User, Matches
-from database.queries import get_user_db
+from database.queries import Queries
 from database.inserts import Inserts
-from database.base import Database
 
 engine = create_engine(DSN)
 Session = sessionmaker()
@@ -48,7 +47,7 @@ def test_get_user_db(session):
     count = 6
     users = UserFactory.create_batch(count)
     chosen_one = users.pop()
-    result = get_user_db(chosen_one.user_id, session)
+    result = Queries(session).get_user_db(chosen_one.user_id)
     assert result
 
 
@@ -77,7 +76,33 @@ def test_insert_matches(session):
                 }]
             }
         }
-    Inserts(DSN).insert_matches(data, 0)
-    Inserts(DSN).insert_matches(data, 0)
+    Inserts(session).insert_matches(data, 0)
+    Inserts(session).insert_matches(data, 0)
     result = session.query(Matches).one_or_none()
     assert result
+
+
+def test_insert_data(session):
+    data = {'user_id': 1,
+            'age': 1,
+            'sex': 1,
+            'city': 1,
+            'relation': 1}
+    Inserts(session).insert_data(data)
+    query = Queries(session).get_user_db(1)
+
+    assert query == data
+
+def test_get_matches(session):
+    data = {
+        "response": {
+            "items": [{
+                "id": 1,
+                "is_closed": False
+                }]
+            }
+        }
+    Inserts(session).insert_matches(data, 0)
+    match = Queries(session).get_matches(0)
+    assert match[0] == 1
+

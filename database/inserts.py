@@ -23,6 +23,5 @@ class Inserts(Database):
         return is_exists
 
     def check_match_exists(self, match_id: int, user_id: int) -> bool:
-        is_exists = self.session.query\
-            (exists().where(and_(Matches.match_id == match_id, Matches.user_id == user_id))).scalar()
+        is_exists = self.session.query(exists().where(and_(Matches.match_id == match_id, Matches.user_id == user_id))).scalar()
         return is_exists

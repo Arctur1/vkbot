@@ -3,11 +3,11 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vkapi import VkRequest
 from settings import token
-from database.queries import get_matches
-from database.inserts import insert_data, check_user_exists
+from database.queries import Queries
+from database.inserts import Inserts
 from buttons import BUTTONS_SEX, BUTTONS_GET_CITY, MAINMENU, EMPTY_KEYBOARD
 from datetime import date, datetime
-
+from database.base import DBSession
 vk = vk_api.VkApi(token=token)
 longpoll = VkLongPoll(vk)
 
@@ -53,7 +53,7 @@ def write_msg(user_id, message, keyboard='', attachment=''):
 
 
 def send_photos(user_id):
-    for match_id in get_matches(user_id):
+    for match_id in Queries(DBSession).get_matches(user_id):
         message = f'vk.com/id{match_id}'
         vk.method('messages.send', {'user_id': user_id, 'message': message,
                                     'random_id': randrange(10 ** 7)})
@@ -71,9 +71,9 @@ def start():
                 request = event.text
                 write_msg(event.user_id, f"...", MAINMENU)
                 if request == "Ввести данные":
-                    if not check_user_exists(event.user_id):
+                    if not Inserts(DBSession).check_user_exists(event.user_id):
                         userinfo = get_data(event.user_id)
-                        insert_data(userinfo)
+                        Inserts(DBSession).insert_data(userinfo)
                     VkRequest().search_matches(event.user_id)
                     write_msg(event.user_id, f"Успешно", MAINMENU)
                 elif request == "Искать":
