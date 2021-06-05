@@ -5,7 +5,8 @@ from settings import DSN
 from factories import UserFactory, MatchesFactory
 from database.models import User, Matches
 from database.queries import get_user_db
-from database.inserts import check_user_exists, insert_matches, check_match_exists
+from database.inserts import Inserts
+from database.base import Database
 
 engine = create_engine(DSN)
 Session = sessionmaker()
@@ -55,7 +56,7 @@ def test_check_user_exists(session):
     count = 6
     users = UserFactory.create_batch(count)
     chosen_one = users.pop()
-    result = check_user_exists(session, chosen_one.user_id)
+    result = Inserts(session).check_user_exists(chosen_one.user_id)
     assert result
 
 
@@ -63,7 +64,7 @@ def test_check_match_exists(session):
     count = 6
     matches = MatchesFactory.create_batch(count)
     chosen_one = matches.pop()
-    result = check_match_exists(session, chosen_one.match_id, chosen_one.user_id)
+    result = Inserts(session).check_match_exists(chosen_one.match_id, chosen_one.user_id)
     assert result
 
 
@@ -76,7 +77,7 @@ def test_insert_matches(session):
                 }]
             }
         }
-    insert_matches(session, data, 0)
-    insert_matches(session, data, 0)
+    Inserts(DSN).insert_matches(data, 0)
+    Inserts(DSN).insert_matches(data, 0)
     result = session.query(Matches).one_or_none()
     assert result

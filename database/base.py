@@ -6,6 +6,12 @@ Base = declarative_base()
 engine = create_engine(DSN)
 Session = sessionmaker(bind=engine)
 DBSession = Session()
-Base.metadata.create_all(engine)
+
+
+class Database:
+    def __init__(self, session: DBSession):
+        self.session = session
+
+
 
 
