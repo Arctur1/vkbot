@@ -1,6 +1,7 @@
 import requests
 from settings import tokenapp
-from db import get_user_db, store_matches
+from Database.queries import get_user_db
+from Database.inserts import store_matches
 
 
 class VkRequest:

@@ -3,8 +3,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from settings import DSN
 from factories import UserFactory
-from db import User, get_user_db
-
+from Database.models import User
+from Database.queries import get_user_db
+from Database.inserts import check_user_exists
 
 engine = create_engine(DSN)
 Session = sessionmaker()
@@ -38,9 +39,18 @@ def test_case(session):
     result = session.query(User).one_or_none()
     assert result is None
 
+
 def test_get_user_db(session):
     count = 6
     users = UserFactory.create_batch(count)
     chosen_one = users.pop()
     result = get_user_db(chosen_one.user_id, session)
+    assert result
+
+
+def test_check_user_exists():
+    count = 6
+    users = UserFactory.create_batch(count)
+    chosen_one = users.pop()
+    result = check_user_exists(session, chosen_one)
     assert result
