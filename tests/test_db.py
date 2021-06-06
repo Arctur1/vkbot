@@ -93,6 +93,7 @@ def test_insert_data(session):
 
     assert query == data
 
+
 def test_get_matches(session):
     data = {
         "response": {

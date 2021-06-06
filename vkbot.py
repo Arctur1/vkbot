@@ -65,9 +65,7 @@ def send_photos(user_id):
 
 def start():
     for event in longpoll.listen():
-        if event.type == VkEventType.MESSAGE_NEW:
-
-            if event.to_me:
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 request = event.text
                 write_msg(event.user_id, f"...", MAINMENU)
                 if request == "Ввести данные":
@@ -82,47 +80,40 @@ def start():
 
 def get_age():
     for event in longpoll.listen():
-        if event.type == VkEventType.MESSAGE_NEW:
-
-            if event.to_me:
-                write_msg(event.user_id, f"Спасибо")
-                return event.text
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+            write_msg(event.user_id, f"Спасибо")
+            return event.text
 
 
 def get_sex():
+    mapper = {
+        'Мужской': 2,
+        'Женский': 1
+        }
     for event in longpoll.listen():
-        if event.type == VkEventType.MESSAGE_NEW:
-
-            if event.to_me:
-                write_msg(event.user_id, f"Спасибо")
-                if event.text == 'Мужской':
-                    return 2
-                if event.text == 'Женский':
-                    return 1
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+            write_msg(event.user_id, f"Спасибо")
+            return mapper.get(event.text)
 
 
 def get_city():
     for event in longpoll.listen():
-        if event.type == VkEventType.MESSAGE_NEW:
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+            search_city = VkRequest().search_cities(event.text)
+            if search_city is not None:
+                write_msg(event.user_id, f"Ваш город {search_city['title']}?", BUTTONS_GET_CITY)
+                for response in longpoll.listen():
+                    if response.type == VkEventType.MESSAGE_NEW and response.to_me:
+                        request = response.text
 
-            if event.to_me:
-                search_city = VkRequest().search_cities(event.text)
-
-                if search_city is not None:
-                    write_msg(event.user_id, f"Ваш город {search_city['title']}?", BUTTONS_GET_CITY)
-                    for response in longpoll.listen():
-                        if response.type == VkEventType.MESSAGE_NEW:
-                            if response.to_me:
-                                request = response.text
-
-                                if request == "Да":
-                                    write_msg(event.user_id, f"Записала")
-                                    return search_city
-                                else:
-                                    write_msg(event.user_id, f"Тогда введите ваш город еще раз")
-                                    get_city()
-                else:
-                    write_msg(event.user_id, f"Не нашла такой город, введите ваш город еще раз")
+                        if request == "Да":
+                            write_msg(event.user_id, f"Записала")
+                            return search_city
+                        else:
+                            write_msg(event.user_id, f"Тогда введите ваш город еще раз")
+                            get_city()
+            else:
+                write_msg(event.user_id, f"Не нашла такой город, введите ваш город еще раз")
 
 
 def calculate_age(b_date):
