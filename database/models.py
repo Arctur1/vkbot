@@ -2,7 +2,7 @@ from sqlalchemy import (
     Column,
     Integer
 )
-from database.base import Base
+from database.base import Base, engine, test_engine
 
 
 class User(Base):
@@ -20,3 +20,6 @@ class Matches(Base):
     user_id = Column(Integer)
     match_id = Column(Integer)
     seen = Column(Integer)
+
+Base.metadata.create_all(test_engine)
+Base.metadata.create_all(engine)

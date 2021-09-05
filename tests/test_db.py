@@ -1,18 +1,21 @@
 import pytest
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from settings import DSN
+from settings import DSNTEST
 from factories import UserFactory, MatchesFactory
 from database.models import User, Matches
 from database.queries import Queries
 from database.inserts import Inserts
+from sqlalchemy.orm import declarative_base
 
-engine = create_engine(DSN)
+engine = create_engine(DSNTEST)
 Session = sessionmaker()
 
 
 @pytest.fixture(scope='module')
 def connection():
+    Base = declarative_base()
+    Base.metadata.create_all(engine)
     connection = engine.connect()
     yield connection
     connection.close()

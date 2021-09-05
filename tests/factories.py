@@ -1,7 +1,6 @@
 import factory
 from database.models import User, Matches
 
-
 class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
     user_id = factory.Sequence(lambda n: '%s' % n)
     age = factory.Sequence(lambda n: '%s' % n)
